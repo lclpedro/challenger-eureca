@@ -1,4 +1,4 @@
-
+import asyncio
 
 def filter_movies(name_movie):
     print(f'Initial process data with name search: {name_movie}')
@@ -20,14 +20,24 @@ def filter_movies(name_movie):
 
     return result.sort_values(by='averageRating', ascending=False)
 
-def download():
+async def download():
     print('Initial download files IMDB')
     import requests
+    
+    loop = asyncio.get_event_loop()
+
     try:
-        rating = requests.get('https://datasets.imdbws.com/title.ratings.tsv.gz')
-        open('rating.gz', 'wb').write(rating.content)
-        titles = requests.get('https://datasets.imdbws.com/title.basics.tsv.gz')
-        open('titles.gz', 'wb').write(titles.content)
+        print('Download rating file')
+        ft_rating = loop.run_in_executor(None, requests.get, 'https://datasets.imdbws.com/title.ratings.tsv.gz')
+        print('Download title file')
+        ft_titles = loop.run_in_executor(None, requests.get, 'https://datasets.imdbws.com/title.basics.tsv.gz')
+
+        resp_rating = await ft_rating
+        resp_titles = await ft_titles
+        print('Downloads completed!')
+
+        open('rating.gz', 'wb').write(resp_rating.content)
+        open('titles.gz', 'wb').write(resp_titles.content)
     except Exception as e:
         raise str(e)
     print('Download Completed')
@@ -55,7 +65,8 @@ if __name__ == "__main__":
     import os
     # Verify if exist files gz.
     if not os.path.isfile('rating.gz') == True or not os.path.isfile('titles.gz') == True:
-        download()
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(download())
     else:
         pass
     
