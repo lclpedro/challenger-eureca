@@ -1,2 +1,6 @@
 env/
 .vscode/
+rating.gz
+rating.tsv
+titles.gz
+titles.tsv

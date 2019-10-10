@@ -10,11 +10,12 @@ def filter_movies(name_movie):
     df_title = pd.DataFrame(titles)
     df_title.drop(
         columns=[
-            'titleType','primaryTitle','isAdult',
+            'titleType','isAdult',
             'startYear', 'endYear', 'runtimeMinutes', 'genres'],
         inplace=True
     )
-    movies_selected = df_title.loc[df_title['originalTitle'] == name_movie]
+
+    movies_selected = df_title[df_title['primaryTitle'].str.contains('(?i)'+name_movie, na=False)]
     df_rating = pd.DataFrame(rating)
     result = pd.merge(movies_selected, df_rating, on='tconst')
 
@@ -77,6 +78,6 @@ if __name__ == "__main__":
     # Execute query with name movie.
     print(
         filter_movies(
-            name_movie='John'
+            name_movie='avengers'
         )
     )
