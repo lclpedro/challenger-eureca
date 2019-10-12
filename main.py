@@ -78,6 +78,6 @@ if __name__ == "__main__":
     # Execute query with name movie.
     print(
         filter_movies(
-            name_movie='avengers'
+            name_movie='The avengers'
         )
     )
